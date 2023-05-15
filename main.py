@@ -15,4 +15,4 @@ from src.pieces.Bishop import Bishop
 
 game = Controller()
 # game.show_valid_moves((4,0))
-game._board.show()
+# game._board.show()
