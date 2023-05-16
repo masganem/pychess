@@ -13,3 +13,6 @@ class King(Piece):
         dist_x = abs(position[0] - target[0])
         dist_y = abs(position[1] - target[1])
         return (dist_x != 0 or dist_y != 0) and (dist_x <= 1 and dist_y <= 1)
+    
+    def get_route(self, position, target):
+        return [target]

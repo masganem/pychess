@@ -1,18 +1,10 @@
-from src.Board import Board
-from src.Controller import Controller
-from src.Tile import Tile
+from src.pieces.Queen import Queen
 from src.pieces.Color import Color
-from src.pieces.Bishop import Bishop
-
-# bishop = Bishop(Color.BLACK)
-# board = Board()
-# board.set((1,1), bishop)
-# for i in range(8):
-#     for j in range(8):
-#         if bishop.is_valid_move((1,1), (i,j)):
-#             board.set((i,j), Tile('x'))
-# board.show()
+from src.pieces.Pawn import Pawn
+from src.Controller import Controller
 
 game = Controller()
-# game.show_valid_moves((4,0))
+game._board.get((2,5)).set(Queen(Color.WHITE))
+game.show_valid_moves((2,5))
+# print(game.is_valid_move((0,0),(0,1)))
 # game._board.show()

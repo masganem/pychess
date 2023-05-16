@@ -1,3 +1,4 @@
+from src.pieces.Piece import Piece
 from src.pieces.Color import Color
 from src.pieces.Pawn import Pawn
 from src.pieces.Bishop import Bishop
@@ -24,7 +25,7 @@ class Board:
                     board[i][j] = Tile('■')
         return board
     
-    def set(self, position, piece):
+    def set(self, position, piece: Piece) -> None:
         # Flipped because access is [line][column] but position is (x, y), i.e., (column, line)
         self._board[position[1]][position[0]].set(piece)
     
@@ -32,7 +33,7 @@ class Board:
         # Flipped because access is [line][column] but position is (x, y), i.e., (column, line)
         return self._board[position[1]][position[0]]
     
-    def show(self):
+    def show(self) -> None:
         for line in self._board:
             line_tokens = [tile.get_token() for tile in line]
             print(' '.join(line_tokens))

@@ -13,3 +13,6 @@ class Knight(Piece):
         dist_x = abs(position[0] - target[0])
         dist_y = abs(position[1] - target[1])
         return (dist_x == 1 and dist_y == 2) or (dist_x == 2 and dist_y == 1)
+
+    def get_route(self, position, target):
+        return [target]
