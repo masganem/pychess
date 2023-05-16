@@ -33,10 +33,15 @@ class Board:
         # Flipped because access is [line][column] but position is (x, y), i.e., (column, line)
         return self._board[position[1]][position[0]]
     
-    def show(self) -> None:
-        for line in self._board:
+    def get_display(self) -> None:
+        x_axis = '  a b c d e f g h'
+        y_axis = range(8, 0, -1)
+        display = [x_axis]
+        for line, y_index in zip(self._board, y_axis):
             line_tokens = [tile.get_token() for tile in line]
-            print(' '.join(line_tokens))
+            line_tokens = [str(y_index)] + line_tokens
+            display.append(' '.join(line_tokens))
+        return '\n'.join(display)
 
     def _spawn_pieces(self) -> None:
         # Pawns
@@ -66,3 +71,10 @@ class Board:
         # Kings
         self.set((4, 0), King(Color.BLACK))
         self.set((4, 7), King(Color.WHITE))
+
+    def in_bounds(self, position, target) -> bool:
+        pos_x_valid = 0 <= position[0] <= 7
+        pos_y_valid = 0 <= position[1] <= 7
+        target_x_valid = 0 <= target[0] <= 7
+        target_y_valid = 0 <= target[1] <= 7
+        return pos_x_valid and pos_y_valid and target_x_valid and target_y_valid
