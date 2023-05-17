@@ -7,10 +7,12 @@ def cls():
     os.system('cls' if os.name=='nt' else 'clear')
 
 def parse_move(move: str) -> bool:
-        matches = re.findall(r"\w\d", move)
-        if len(matches) != 2:
-            print("Invalid move format.\n")
-            return False
+        matches = re.findall(r"[a-h][1-8]", move)
+        if len(matches) == 1:
+            position = parse_position(matches[0])
+            return position, None
+        elif len(matches) != 2:
+            raise Exception("Invalid move format.\n")
         
         position = parse_position(matches[0])
         target = parse_position(matches[1])

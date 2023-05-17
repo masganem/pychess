@@ -11,17 +11,17 @@ from src.Tile import Tile
 
 class Controller:
     def __init__(self) -> None:
-        self._board = Board()
+        self.board = Board()
         self._turn = Color.WHITE
 
     def move(self, position, target) -> bool:
         if not self._is_valid_move(position, target):
             return False
         else:
-            origin_tile = self._board.get(position)
+            origin_tile = self.board.get(position)
             origin_piece = origin_tile.piece
 
-            target_tile = self._board.get(target)
+            target_tile = self.board.get(target)
             target_tile.set(origin_piece)
 
             origin_tile.clear()
@@ -30,18 +30,18 @@ class Controller:
             return True
         
     def promote(self, position, DesiredPiece: Type[Piece]) -> None:
-        promoted_piece = self._board.get(position).piece
+        promoted_piece = self.board.get(position).piece
         if promoted_piece == None:
             raise Exception('There is no piece to be promoted in that position.')
         color = promoted_piece.color
-        self._board.set(position, DesiredPiece(color))
+        self.board.set(position, DesiredPiece(color))
     
     def get_display(self) -> bool:
-        return self._board.get_display()
+        return self.board.get_display()
 
     def _is_valid_move(self, position, target, check_check=True, board=None, turn=None) -> bool:
         if board == None:
-            board = self._board
+            board = self.board
 
         if turn == None:
             turn = self._turn
@@ -85,7 +85,7 @@ class Controller:
                 for x in range(-1,2):
                     for y in range(-1,2):
                         shifted_target = (target[0] + x, target[1] + y)
-                        inspected_piece = self._board.get(shifted_target).piece
+                        inspected_piece = self.board.get(shifted_target).piece
                         if isinstance(inspected_piece, King) and inspected_piece.color != origin_piece.color:
                             raise Exception('Kings are afraid of each other!')
             
@@ -100,7 +100,7 @@ class Controller:
 
         return True
         
-    def _get_valid_moves(self, position) -> str:
+    def get_valid_moves(self, position) -> str:
         moves = []
         for x in range(8):
             for y in range(8):
@@ -113,7 +113,7 @@ class Controller:
     
     # Checks if a move is blocked by check
     def _blocked_by_check(self, position, target) -> bool:
-        temp_board = deepcopy(self._board)
+        temp_board = deepcopy(self.board)
 
         # Simulate movement
         origin_tile = temp_board.get(position)
@@ -145,13 +145,13 @@ class Controller:
         # If every move is invalid, then checkmate!
         for x in range(8):
             for y in range(8):
-                tile = self._board.get((x,y))
+                tile = self.board.get((x,y))
                 if tile.piece == None:
                     pass
                 elif tile.piece.color != self._turn:
                     pass
                 
-                valid_moves = self._get_valid_moves((x,y))
+                valid_moves = self.get_valid_moves((x,y))
                 if len(valid_moves) > 0:
                     return False
 
@@ -160,7 +160,7 @@ class Controller:
     def is_promotion(self) -> Optional[Position]:
         for x in range(8):
             for y in [0, 7]:
-                tile = self._board.get((x,y))
+                tile = self.board.get((x,y))
                 if tile.piece == None:
                     pass
                 elif isinstance(tile.piece, Pawn):

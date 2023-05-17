@@ -1,5 +1,6 @@
+from copy import deepcopy
 from time import sleep
-from typing import Tuple
+from src.Tile import Tile
 from src.pieces.Bishop import Bishop
 from src.pieces.Knight import Knight
 from src.pieces.Rook import Rook
@@ -20,7 +21,15 @@ class PlayerInterface:
         print(self._controller.get_display(), '\n')
         while not self._is_checkmate:
             move = input(f"{str(self._controller._turn.name).title()} plays: ")
-            position, target = parse_move(move)
+            try:
+                position, target = parse_move(move)
+            except Exception as e:
+                print(e)
+                continue
+
+            if target == None:
+                self._display_valid_moves(position)
+                continue
 
             self._move(position, target)
 
@@ -33,6 +42,15 @@ class PlayerInterface:
         
         self._checkmate()
         self._log_moves()
+
+    def _display_valid_moves(self, position) -> None:
+        cls()
+        valid_moves = self._controller.get_valid_moves(position)
+        temp_board = deepcopy(self._controller.board)
+        for _, target in valid_moves:
+            x, y = target
+            temp_board._board[y][x] = Tile('◎')
+        print(temp_board.get_display(), '\n')
 
     def _move(self, position, target) -> bool:
         try:
