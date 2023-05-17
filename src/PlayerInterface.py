@@ -29,9 +29,10 @@ class PlayerInterface:
                 self._promote(promotion_position)
 
             self._is_checkmate = self._controller.is_checkmate()
-            self._move_log += move
+            self._move_log.append(move)
         
         self._checkmate()
+        self._log_moves()
 
     def _move(self, position, target) -> bool:
         try:
@@ -47,7 +48,7 @@ class PlayerInterface:
         cls()
         print(self._controller.get_display(), '\n')
         print("Checkmate!")
-        sleep(5)
+        sleep(3)
 
     def _promote(self, position: Position) -> None:
         cls()
@@ -73,3 +74,14 @@ class PlayerInterface:
         cls()
         print(self._controller.get_display(), '\n')
         print("There you go.\n")
+
+    def _log_moves(self) -> None:
+        log_preference = input("Would you like to log your moves? (Y/N): ").lower()
+        if log_preference == 'y':
+            filename = input("Cool. How do you want to call this game?\n")
+            with open(f'games/{filename}.pcg', 'w') as file:
+                move_log_dump = ', '.join(self._move_log)
+                file.write(move_log_dump)
+                print(f'Log saved to to games/{filename}.pcg')
+        else:
+            pass
