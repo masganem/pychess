@@ -1,4 +1,7 @@
 from copy import deepcopy
+from typing import Optional, Type
+from src.pieces.Piece import Piece
+from src.Position import Position
 from src.pieces.King import King
 from src.pieces.Color import Color, get_opposite_color
 from src.pieces.Pawn import Pawn
@@ -16,11 +19,22 @@ class Controller:
             return False
         else:
             origin_tile = self._board.get(position)
+            origin_piece = origin_tile.piece
+
             target_tile = self._board.get(target)
-            target_tile.set(origin_tile.piece)
+            target_tile.set(origin_piece)
+
             origin_tile.clear()
+
             self._switch_turn()
             return True
+        
+    def promote(self, position, DesiredPiece: Type[Piece]) -> None:
+        promoted_piece = self._board.get(position).piece
+        if promoted_piece == None:
+            raise Exception('There is no piece to be promoted in that position.')
+        color = promoted_piece.color
+        self._board.set(position, DesiredPiece(color))
     
     def get_display(self) -> bool:
         return self._board.get_display()
@@ -88,11 +102,11 @@ class Controller:
         
     def _get_valid_moves(self, position) -> str:
         moves = []
-        for i in range(8):
-            for j in range(8):
+        for x in range(8):
+            for y in range(8):
                 try:
-                    self._is_valid_move(position, (i,j))
-                    moves.append((position, (i, j)))
+                    self._is_valid_move(position, (x,y))
+                    moves.append((position, (x, y)))
                 except:
                     pass
         return moves
@@ -109,18 +123,18 @@ class Controller:
 
         # Find King
         king_position = ()
-        for i in range(8):
-            for j in range(8):
-                target_piece = temp_board.get((i, j)).piece
+        for x in range(8):
+            for y in range(8):
+                target_piece = temp_board.get((x, y)).piece
                 if isinstance(target_piece, King) and target_piece.color == origin_piece.color:
-                    king_position = (i, j)
+                    king_position = (x, y)
         
         # Check if King can be captured after move
-        for i in range(8):
-            for j in range(8):
+        for x in range(8):
+            for y in range(8):
                 try:
                     mock_turn = get_opposite_color(self._turn)
-                    self._is_valid_move((i, j), king_position, False, temp_board, mock_turn)
+                    self._is_valid_move((x, y), king_position, False, temp_board, mock_turn)
                     return True
                 except:
                     pass
@@ -129,19 +143,33 @@ class Controller:
 
     def is_checkmate(self) -> bool:
         # If every move is invalid, then checkmate!
-        for i in range(8):
-            for j in range(8):
-                tile = self._board.get((i,j))
+        for x in range(8):
+            for y in range(8):
+                tile = self._board.get((x,y))
                 if tile.piece == None:
                     pass
                 elif tile.piece.color != self._turn:
                     pass
                 
-                valid_moves = self._get_valid_moves((i,j))
+                valid_moves = self._get_valid_moves((x,y))
                 if len(valid_moves) > 0:
                     return False
 
         return True
+    
+    def is_promotion(self) -> Optional[Position]:
+        for x in range(8):
+            for y in [0, 7]:
+                tile = self._board.get((x,y))
+                if tile.piece == None:
+                    pass
+                elif isinstance(tile.piece, Pawn):
+                    if tile.piece.color == Color.BLACK and y == 7:
+                        return (x, y)
+                    elif tile.piece.color == Color.WHITE and y == 0:
+                        return (x, y)
+                    else:
+                        pass
 
     def _switch_turn(self) -> str:
         self._turn = get_opposite_color(self._turn)
