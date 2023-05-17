@@ -41,10 +41,12 @@ class Controller:
             raise Exception('No piece at origin position.')
 
         if not origin_piece.color == turn:
-            raise Exception('Invalid turn.')
+            attempted_color = str(origin_piece.color.name).lower()
+            raise Exception(f'It\'s not {attempted_color}\'s turn yet.')
 
         if not origin_piece.is_valid_move(position, target):
-            raise Exception('Invalid move for chosen piece.')
+            piece_name = origin_piece.__class__.__name__.lower()
+            raise Exception(f'The {piece_name} does not move like that.')
         
         route = origin_piece.get_route(position, target)
         for coordinate in route:
@@ -54,22 +56,30 @@ class Controller:
                 if abs(position[0] - target[0]) != 0:
                     if tile.piece != None:
                         if tile.piece.color == origin_piece.color:
-                            raise Exception('Invalid move for chosen piece.')
+                            raise Exception('You can\'t capture your own piece.')
                         else:
                             pass
                     else:
-                        raise Exception('Invalid move for chosen piece.')
+                        raise Exception('Pawns only do that when capturing.')
                 else:
                     if tile.piece != None:
-                        raise Exception('Invalid move for chosen piece.')
+                        raise Exception('Can\'t get past that.')
                     else:
                         pass
+            
+            elif isinstance(origin_piece, King):
+                for x in range(-1,2):
+                    for y in range(-1,2):
+                        shifted_target = (target[0] + x, target[1] + y)
+                        inspected_piece = self._board.get(shifted_target).piece
+                        if isinstance(inspected_piece, King) and inspected_piece.color != origin_piece.color:
+                            raise Exception('Kings are afraid of each other!')
 
             elif tile.piece != None:
                 if coordinate == route[-1] and tile.piece.color != origin_piece.color:
                     pass
                 else:
-                    raise Exception('Invalid move for chosen piece.')
+                    raise Exception('There\'s something in your way.')
         
         if check_check and self._blocked_by_check(position, target):
             raise Exception('You\'re in check!')
