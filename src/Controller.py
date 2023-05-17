@@ -1,6 +1,6 @@
 from copy import deepcopy
 from src.pieces.King import King
-from src.pieces.Color import Color
+from src.pieces.Color import Color, get_opposite_color
 from src.pieces.Pawn import Pawn
 from src.Board import Board
 from src.Tile import Tile
@@ -71,24 +71,24 @@ class Controller:
                 else:
                     raise Exception('Invalid move for chosen piece.')
         
-        if check_check and self._is_in_check(position, target):
+        if check_check and self._blocked_by_check(position, target):
             raise Exception('You\'re in check!')
 
         return True
         
-    def get_valid_moves_display(self, position) -> str:
-        temp_board = deepcopy(self._board)
-        tile = temp_board.get(position)
-        if tile.piece == None:
-            print(f"No piece found for position {position}")
-            return
+    def _get_valid_moves(self, position) -> str:
+        moves = []
         for i in range(8):
             for j in range(8):
-                if self._is_valid_move(position, (i,j)):
-                    temp_board._board[j][i] = Tile('◎')
-        return temp_board.get_display()
+                try:
+                    self._is_valid_move(position, (i,j))
+                    moves.append((position, (i, j)))
+                except:
+                    pass
+        return moves
     
-    def _is_in_check(self, position, target) -> bool:
+    # Checks if a move is blocked by check
+    def _blocked_by_check(self, position, target) -> bool:
         temp_board = deepcopy(self._board)
 
         # Simulate movement
@@ -109,19 +109,29 @@ class Controller:
         for i in range(8):
             for j in range(8):
                 try:
-                    mock_turn = self._get_opposite_turn(self._turn)
+                    mock_turn = get_opposite_color(self._turn)
                     self._is_valid_move((i, j), king_position, False, temp_board, mock_turn)
                     return True
                 except:
                     pass
         
         return False
-    
+
+    def is_checkmate(self) -> bool:
+        # If every move is invalid, then checkmate!
+        for i in range(8):
+            for j in range(8):
+                tile = self._board.get((i,j))
+                if tile.piece == None:
+                    pass
+                elif tile.piece.color != self._turn:
+                    pass
+                
+                valid_moves = self._get_valid_moves((i,j))
+                if len(valid_moves) > 0:
+                    return False
+
+        return True
+
     def _switch_turn(self) -> str:
-        self._turn = self._get_opposite_turn(self._turn)
-    
-    def _get_opposite_turn(self, turn: Color) -> str:
-        if turn == Color.BLACK:
-            return Color.WHITE
-        else:
-            return Color.BLACK
+        self._turn = get_opposite_color(self._turn)

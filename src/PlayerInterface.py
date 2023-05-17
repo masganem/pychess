@@ -1,30 +1,26 @@
-import re
+from time import sleep
 from typing import Tuple
 from src.Controller import Controller
 from src.Position import Position
-from src.util import cls
+from src.util import cls, parse_move
 
 
 class PlayerInterface:
     def __init__(self) -> None:
         self._controller = Controller()
+        self._is_checkmate = False
 
     def start(self) -> None:
+        cls()
         print(self._controller.get_display(), '\n')
-        while True:
+        while not self._is_checkmate:
             move = input(f"{str(self._controller._turn.name).title()} plays: ")
-            self.parse_move(move)
-        
+            position, target = parse_move(move)
+            self._move(position, target)
+            self._is_checkmate = self._controller.is_checkmate()
+        self._checkmate()
 
-    def parse_move(self, move: str) -> bool:
-        matches = re.findall(r"\w\d", move)
-        if len(matches) != 2:
-            print("Invalid move format.\n")
-            return False
-        
-        position = self._parse_position(matches[0])
-        target = self._parse_position(matches[1])
-
+    def _move(self, position, target) -> bool:
         try:
             self._controller.move(position, target)
             cls()
@@ -34,7 +30,9 @@ class PlayerInterface:
             print(e, '\n')
             return False
 
-    def _parse_position(self, coordinate: str) -> Position:
-        x = ord(coordinate[0]) - 97
-        y = (8 - int(coordinate[1])) % 8
-        return (x, y)
+    def _checkmate(self):
+        cls()
+        print(self._controller.get_display(), '\n')
+        print("CHECKMATE!")
+        sleep(5)
+        exit()
