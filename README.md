@@ -27,6 +27,8 @@ Por fim, também é possível salvar as partidas jogadas para fazer um replay de
 ## Executando
 Para iniciar um novo jogo, basta estar no diretório do projeto e executar o comando `python main.py`. Ao final do jogo (após o xeque-mate), será possível salvar o relatório da partida jogada com um nome personalizado. Para abrir o replay de uma partida, basta executar `python main.py <nome da partida>`. O relatório de uma partida trivial ([Fool's Mate](https://en.wikipedia.org/wiki/Fool%27s_mate)) está incluso dentro da pasta `games`, e pode ser executado com `python main.py foolsmate`.
 
+Também temos um ambiente no [Repl.it](https://replit.com/@masganem/pychess?v=1) para executar o jogo remotamente.
+
 ## Detalhes de implementação
 O sistema obedece a uma arquitetura (razoavelmente) orientada a objetos, com duas classes principais, chamadas de `PlayerInterface` e `ReplayInterface`, respectivamente, que conduzem os dois fluxos de uso de mais alto nível do programa.
 Ambas as classes fazem uso de um `Controller` para gerenciar o estado do jogo, que é responsável por analisar a legalidade dos movimentos executados, verificar estados de promoção de peões, xeque-mate, entre a garantia de outras regras.
