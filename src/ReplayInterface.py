@@ -13,9 +13,11 @@ class ReplayInterface:
         cls()
         print(self._controller.get_display(), '\n')
         for move in move_log:
-            print(f"{str(self._controller._turn.name).title()} plays: ", end='')
+            sys.stdout.write(f"{str(self._controller._turn.name).title()} plays: ")
+            sys.stdout.flush()
+            sleep(1)
             for i in move:
-                sleep(0.2)
+                sleep(0.1)
                 sys.stdout.write(i)
                 sys.stdout.flush()
             print('\n')
@@ -24,7 +26,8 @@ class ReplayInterface:
             sleep(1)
             cls()
             print(self._controller.get_display(), '\n')
-        print('Game over.')
+            sleep(1)
+        print('Replay over.')
             
     def _parse_move_log(self, filename: str) -> None:
         with open(f'games/{filename}.pcg', 'r') as file:
