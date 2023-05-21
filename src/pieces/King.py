@@ -16,3 +16,8 @@ class King(Piece):
     
     def get_route(self, position, target):
         return [target]
+    
+    def validate_special_move(self, inspected_piece: Piece):
+        if isinstance(inspected_piece, King) and inspected_piece.color != self.color:
+                raise Exception('Kings are afraid of each other!')
+                

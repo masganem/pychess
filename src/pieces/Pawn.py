@@ -1,3 +1,4 @@
+from src.Position import Position
 from src.pieces.Color import Color
 from src.pieces.Piece import Piece
 
@@ -29,3 +30,18 @@ class Pawn(Piece):
             for i in range(position[1] + step, target[1] + step, step):
                 route.append((position[0], i))
             return route
+        
+    def validate_special_move(self, position: Position, target: Position, target_piece: Piece):
+        if abs(position[0] - target[0]) != 0:
+            if target_piece != None:
+                if target_piece.color == self.color:
+                    raise Exception('You can\'t capture your own piece.')
+                else:
+                    pass
+            else:
+                raise Exception('Pawns only do that when capturing.')
+        else:
+            if target_piece != None:
+                raise Exception('Can\'t get past that.')
+            else:
+                pass

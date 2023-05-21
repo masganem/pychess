@@ -72,7 +72,7 @@ class Board:
         self.set((4, 0), King(Color.BLACK))
         self.set((4, 7), King(Color.WHITE))
 
-    def in_bounds(self, position, target) -> bool:
+    def in_bounds(position, target) -> bool:
         pos_x_valid = 0 <= position[0] <= 7
         pos_y_valid = 0 <= position[1] <= 7
         target_x_valid = 0 <= target[0] <= 7

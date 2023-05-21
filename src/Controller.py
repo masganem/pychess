@@ -38,19 +38,16 @@ class Controller:
     
     def get_display(self) -> bool:
         return self.board.get_display()
+    
+    def _pre_validate(self, position: Position, target: Position, origin_piece: Piece, turn: Color ) -> bool:
+        """
+        Validates basic rules: move should be in bounds, move should start from a piece,
+        moving piece should pertain to current turn's color, move should adhere to piece's routes.
+        """
 
-    def _is_valid_move(self, position, target, check_check=True, board=None, turn=None) -> bool:
-        if board == None:
-            board = self.board
-
-        if turn == None:
-            turn = self._turn
-
-        if not (board.in_bounds(position, target)):
+        if not (Board.in_bounds(position, target)):
             raise Exception('Move is out of bounds.')
 
-        origin_tile = board.get(position)
-        origin_piece = origin_tile.piece
         if origin_piece == None:
             raise Exception('No piece at origin position.')
 
@@ -61,33 +58,43 @@ class Controller:
         if not origin_piece.is_valid_move(position, target):
             piece_name = origin_piece.__class__.__name__.lower()
             raise Exception(f'The {piece_name} does not move like that.')
+
+    def _is_valid_move(self, position, target, check_check=True, board=None, turn=None) -> bool:
+        """
+        Validates a movement. See `Controller._pre_validate` for pre-validations.
+        Checks for obstacles in a piece's route, captures and special cases for Pawn and King.
+        """
+
+        if board == None:
+            board = self.board
+
+        if turn == None:
+            turn = self._turn
+
+        origin_tile = board.get(position)
+        origin_piece = origin_tile.piece
+
+        try:
+            self._pre_validate(position, target, origin_piece, turn)
+        except Exception as e:
+            raise e
         
         route = origin_piece.get_route(position, target)
         for coordinate in route:
             tile = board.get(coordinate)
             # Special cases for Pawn: enabling cross-capturing; blocking forward capturing.
             if isinstance(origin_piece, Pawn):
-                if abs(position[0] - target[0]) != 0:
-                    if tile.piece != None:
-                        if tile.piece.color == origin_piece.color:
-                            raise Exception('You can\'t capture your own piece.')
-                        else:
-                            pass
-                    else:
-                        raise Exception('Pawns only do that when capturing.')
-                else:
-                    if tile.piece != None:
-                        raise Exception('Can\'t get past that.')
-                    else:
-                        pass
+                try:
+                    origin_piece.validate_special_move(position, target, tile.piece)
+                except Exception as e:
+                    raise e
 
             if isinstance(origin_piece, King):
                 for x in range(-1,2):
                     for y in range(-1,2):
                         shifted_target = (target[0] + x, target[1] + y)
                         inspected_piece = self.board.get(shifted_target).piece
-                        if isinstance(inspected_piece, King) and inspected_piece.color != origin_piece.color:
-                            raise Exception('Kings are afraid of each other!')
+                        origin_piece.validate_special_move(inspected_piece)
             
             if tile.piece != None and not isinstance(origin_piece, Pawn):
                 if coordinate == route[-1] and tile.piece.color != origin_piece.color:
