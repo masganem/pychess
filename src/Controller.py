@@ -168,15 +168,11 @@ class Controller:
         for x in range(8):
             for y in [0, 7]:
                 tile = self.board.get((x,y))
-                if tile.piece == None:
-                    pass
-                elif isinstance(tile.piece, Pawn):
+                if isinstance(tile.piece, Pawn):
                     if tile.piece.color == Color.BLACK and y == 7:
                         return (x, y)
                     elif tile.piece.color == Color.WHITE and y == 0:
                         return (x, y)
-                    else:
-                        pass
 
     def _switch_turn(self) -> str:
         self._turn = get_opposite_color(self._turn)

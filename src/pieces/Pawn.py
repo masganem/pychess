@@ -14,10 +14,14 @@ class Pawn(Piece):
     def is_valid_move(self, position, target):
         dist_x = position[0] - target[0]
         dist_y = position[1] - target[1]
-        if (self.color == Color.BLACK):
-            return (position[1] == 1 and dist_y == -2 and dist_x == 0) or (dist_y == -1 and (-1 <= dist_x <= 1))
-        else:
-            return (position[1] == 6 and dist_y == 2 and dist_x == 0) or (dist_y == 1 and (-1 <= dist_x <= 1))
+        
+        is_starting_position = self.color == Color.BLACK and position[1] == 1 or self.color == Color.WHITE and position[1] == 6
+        direction = -1 if self.color == Color.BLACK else 1
+        double_move = direction * 2
+
+        is_common_valid_move = dist_y == direction and (-1 <= dist_x <= 1)
+        
+        return (is_starting_position and dist_y == double_move) or is_common_valid_move
     
     def get_route(self, position, target):
         dist_x = abs(position[0] - target[0])
