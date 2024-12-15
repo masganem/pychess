@@ -37,8 +37,19 @@ O `Controller`, por sua vez, utiliza de um `Board`, composto por um mapa de 64 `
 
 Com a coordenação das operações das classes aqui descritas (e mais alguns truques de código), a funcionalidade do jogo é servida ao usuário final pela linha de comando em um display que utiliza o texto para permitir uma experiência gráfica.
 
+## Integrações
+### Codecov
+No Workflow atual do GitHub actions, testes são executados com `pytest` e `pytest-cov` de maneira a gerar um relatório de cobertura mantido em integração com a plataforma [Codecov](https://app.codecov.io/github/masganem/pychess).
+
 ---
-Desenvolvedores:
+Desenvolvedores: 
+- Marcelo Augusto Salomão Ganem
+- Bernardo Roberto Andrade Silva
+- Roger Oliveira
+
+---
+
+Desenvolvedores (2023.2, ES2 - [Último commit](https://github.com/masganem/pychess/commit/f944cd865b715c881dea33c2dbfac5798915160f))
 - Marcelo Augusto Salomão Ganem
 - Gabriel Medeiros Teixeira
 - Rafael Vinícius dos Santos
