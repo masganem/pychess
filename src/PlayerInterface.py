@@ -18,7 +18,7 @@ class PlayerInterface:
 
     def start(self) -> None:
         cls()
-        print(self._controller.get_display(), '\n')
+        print(self._controller.get_display() + '\n')
         while not self._is_checkmate:
             move = input(f"{str(self._controller._turn.name).title()} plays: ")
             try:
@@ -50,13 +50,13 @@ class PlayerInterface:
         for _, target in valid_moves:
             x, y = target
             temp_board._board[y][x] = Tile('◎')
-        print(temp_board.get_display(), '\n')
+        print(temp_board.get_display() + '\n')
 
     def _move(self, position, target) -> bool:
         try:
             self._controller.move(position, target)
             cls()
-            print(self._controller.get_display(), '\n')
+            print(self._controller.get_display() + '\n')
             return True
         except Exception as e:
             print(e, '\n')
@@ -64,13 +64,13 @@ class PlayerInterface:
 
     def _checkmate(self) -> None:
         cls()
-        print(self._controller.get_display(), '\n')
+        print(self._controller.get_display() + '\n')
         print("Checkmate!")
         sleep(3)
 
     def _promote(self, position: Position) -> None:
         cls()
-        print(self._controller.get_display(), '\n')
+        print(self._controller.get_display() + '\n')
         print("Promotion time!")
         while True:
             desired_piece = input("What should this pawn be promoted to?\n").lower()
@@ -90,7 +90,7 @@ class PlayerInterface:
                 case _:
                     print("Hmm, pretty sure that's not a piece. Let's do this again.")
         cls()
-        print(self._controller.get_display(), '\n')
+        print(self._controller.get_display() + '\n')
         print("There you go.\n")
 
     def _log_moves(self) -> None:
