@@ -145,3 +145,90 @@ class TestPlay(unittest.TestCase):
         out, _ = self.process.communicate()
 
         self.assertTrue("You're in check" in out)
+
+    def test_pawn_promotion(self):
+        pawn_promotion_moves = ["a2a4", "b7b5", "a4b5", "h7h6", "b5b6", "h6h5", "b6b7", "b8a6", "b7b8", "queen"]
+        expected_board_after_promotion = (
+            "  a b c d e f g h\n" +
+            "8 ♖ ♛ ♗ ♕ ♔ ♗ ♘ ♖\n" +
+            "7 ♙ ■ ♙ ♙ ♙ ♙ ♙ ■\n" + 
+            "6 ♘ □ ■ □ ■ □ ■ □\n" + 
+            "5 □ ■ □ ■ □ ■ □ ♙\n" + 
+            "4 ■ □ ■ □ ■ □ ■ □\n" +
+            "3 □ ■ □ ■ □ ■ □ ■\n" + 
+            "2 ■ ♟︎ ♟︎ ♟︎ ♟︎ ♟︎ ♟︎ ♟︎\n" + 
+            "1 ♜ ♞ ♝ ♛ ♚ ♝ ♞ ♜\n"
+        )
+
+        for move in pawn_promotion_moves:
+            self.process.stdin.write(move + os.linesep)
+            self.process.stdin.flush()
+
+        out, _ = self.process.communicate()
+
+        expected_turn_message_after_promotion = "There you go."
+
+        self.assertIn(expected_turn_message_after_promotion, out)
+        self.assertIn(expected_board_after_promotion, out)
+
+    def test_illegal_king_move_into_check(self):
+        moves = ["d2d4", "c7c6", "h2h4", "d8a5", "e1d2"]
+
+        for move in moves:
+            self.process.stdin.write(move + os.linesep)
+            self.process.stdin.flush()
+
+        out, _ = self.process.communicate()
+
+        expected_turn_message_after_illegal_move = "White plays: You're in check!"
+
+        self.assertIn(expected_turn_message_after_illegal_move, out)
+
+    def test_board_display_valid_moves_and_its_white_pieces_turn(self):
+        expected_valid_moves_board = (
+            "  a b c d e f g h\n" +
+            "8 ♖ ♘ ♗ ♕ ♔ ♗ ♘ ♖\n" +
+            "7 ♙ ♙ ♙ ♙ ♙ ♙ ♙ ♙\n" + 
+            "6 ■ □ ■ □ ■ □ ■ □\n" + 
+            "5 □ ■ □ ■ □ ■ □ ■\n" + 
+            "4 ■ □ ■ □ ■ □ ■ □\n" +
+            "3 ◎ ■ ◎ ■ □ ■ □ ■\n" + 
+            "2 ♟︎ ♟︎ ♟︎ ♟︎ ♟︎ ♟︎ ♟︎ ♟︎\n" + 
+            "1 ♜ ♞ ♝ ♛ ♚ ♝ ♞ ♜\n"
+        )
+
+        expected_turn_message = "White plays: "
+
+        show_valid_moves = "b1"
+        self.process.stdin.write(show_valid_moves + os.linesep)
+        self.process.stdin.flush()
+
+        out, _ = self.process.communicate()
+
+        self.assertIn(expected_valid_moves_board, out)
+        self.assertIn(expected_turn_message, out)
+
+    def test_checkmate(self):
+        moves = ["e2e4", "f7f5", "e4f5", "g7g5", "d1h5"]
+        expected_checkmate_board = (
+            "  a b c d e f g h\n" +
+            "8 ♖ ♘ ♗ ♕ ♔ ♗ ♘ ♖\n" +
+            "7 ♙ ♙ ♙ ♙ ♙ ■ □ ♙\n" + 
+            "6 ■ □ ■ □ ■ □ ■ □\n" + 
+            "5 □ ■ □ ■ □ ♟︎ ♙ ♛\n" + 
+            "4 ■ □ ■ □ ■ □ ■ □\n" +
+            "3 □ ■ □ ■ □ ■ □ ■\n" + 
+            "2 ♟︎ ♟︎ ♟︎ ♟︎ ■ ♟︎ ♟︎ ♟︎\n" + 
+            "1 ♜ ♞ ♝ ■ ♚ ♝ ♞ ♜\n"
+        )
+
+        for move in moves:
+            self.process.stdin.write(move + os.linesep)
+            self.process.stdin.flush()
+
+        out, _ = self.process.communicate()
+
+        expected_message = "Checkmate!"
+
+        self.assertIn(expected_message, out)
+        self.assertIn(expected_checkmate_board, out)
